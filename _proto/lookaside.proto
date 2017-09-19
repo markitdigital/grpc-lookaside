@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package _proto;
+
+service Lookaside {
+	rpc Resolve(Request) returns (Response) {}
+}
+
+message Request {
+	string service = 1;
+	enum RouterType {
+		RANDOM = 0;
+		ROUNDROBIN = 1;
+	}
+	RouterType router = 2;
+}
+
+message Response {
+	string address = 1;
+}
