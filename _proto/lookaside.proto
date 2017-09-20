@@ -7,12 +7,14 @@ service Lookaside {
 }
 
 message Request {
-	string service = 1;
-	enum RouterType {
+	enum RouterType { // this is a kludge because of an error with grpcc - https://github.com/njpatel/grpcc/issues/39
 		RANDOM = 0;
 		ROUNDROBIN = 1;
+		HASH = 2;
 	}
-	RouterType router = 2;
+	RouterType router = 1;
+	string service = 2;
+	bytes hash = 3;
 }
 
 message Response {
