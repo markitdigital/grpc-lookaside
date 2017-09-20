@@ -35,16 +35,3 @@ the builds. Once everything is installed and setup, just run:
 ```bash
 $ make
 ```
-
-## Docker
-Pull the image from artifactory:
-
-```bash
-$ docker pull packages.tools.mdgapp.net/grpc-lookaside
-```
-
-Run like so:
-
-```bash
-$ docker run -d -p 3000:3000 -e BIND=:3000 -e CONSUL=127.0.0.1:8500 -e DATACENTER=dc1 grpc-lookaside
-```
