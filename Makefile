@@ -1,5 +1,4 @@
 LDFLAGS=-ldflags "-s -w"
-
 .DEFAULT_GOAL := all
 all: clean ensure proto test windows linux
 
@@ -17,7 +16,7 @@ proto:
 	protoc --go_out=plugins=grpc:. ./_proto/lookaside.proto
 
 test:
-	go test -cover
+	go test -cover stash.mgmt.local/arch/grpc-lookaside/lib
 
 windows:
 	GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o ./bin/linux_amd64/grpc-lookaside main.go

@@ -42,6 +42,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Failed to listen: %v", err)
 		}
+
 		log.Printf("Listening for requests at %s\n", c.String("bind"))
 		defer listener.Close()
 

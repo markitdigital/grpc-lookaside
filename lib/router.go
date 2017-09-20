@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"time"
 )
 
 // Router is a type that contains a set of addresses and methods for resolving them based on use input
@@ -13,37 +12,6 @@ type Router struct {
 	Addresses        []string
 	roundRobinCursor int
 	hashRouteMap     map[string]string
-}
-
-// ResolveRandom returns a random address
-func (r *Router) ResolveRandom() (string, error) {
-
-	if len(r.Addresses) == 0 {
-		return "", errors.New("attempted to resolve address with empty array")
-	}
-
-	rand.Seed(time.Now().Unix())
-	return r.Addresses[rand.Intn(len(r.Addresses))], nil
-
-}
-
-// ResolveRoundRobin returns the next address, looping back to the first when reaching the end
-func (r *Router) ResolveRoundRobin() (string, error) {
-
-	if len(r.Addresses) == 0 {
-		return "", errors.New("attempted to resolve address with empty array")
-	}
-
-	// if the cursor is out of range, reset it to the first item
-	if r.roundRobinCursor == len(r.Addresses) {
-		r.roundRobinCursor = 0
-	}
-
-	// resolve address, increment cursor position, return
-	address := r.Addresses[r.roundRobinCursor]
-	r.roundRobinCursor++
-	return address, nil
-
 }
 
 // ResolveHash returns an address bound to the hash provided, or picks a new one and binds it
@@ -71,5 +39,35 @@ func (r *Router) ResolveHash(data []byte) (string, error) {
 	}
 
 	return r.hashRouteMap[hash], nil
+
+}
+
+// ResolveRandom returns a random address
+func (r *Router) ResolveRandom() (string, error) {
+
+	if len(r.Addresses) == 0 {
+		return "", errors.New("attempted to resolve address with empty array")
+	}
+
+	return r.Addresses[rand.Intn(len(r.Addresses))], nil
+
+}
+
+// ResolveRoundRobin returns the next address, looping back to the first when reaching the end
+func (r *Router) ResolveRoundRobin() (string, error) {
+
+	if len(r.Addresses) == 0 {
+		return "", errors.New("attempted to resolve address with empty array")
+	}
+
+	// if the cursor is out of range, reset it to the first item
+	if r.roundRobinCursor == len(r.Addresses) {
+		r.roundRobinCursor = 0
+	}
+
+	// resolve address, increment cursor position, return
+	address := r.Addresses[r.roundRobinCursor]
+	r.roundRobinCursor++
+	return address, nil
 
 }

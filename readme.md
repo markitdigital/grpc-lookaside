@@ -1,9 +1,11 @@
 # gRPC Lookaside Load Balancer
 This is an implementation of a lookaside (or external/one-arm) load balancer as detailed in the [gRPC documentation for
-load balancing](https://grpc.io/blog/loadbalancing). It uses Consul as the primary means of service discovery, but could be made to support other applications if needed.
+load balancing](https://grpc.io/blog/loadbalancing). It uses Consul as the primary means of service discovery, but could 
+be made to support other applications if needed.
 
 ## Usage
-Unsurprisingly, this service uses a gRPC-based interface to request addresses (see [proto](_proto/lookaside.proto) for services and messages). The application has a simple CLI interface:
+Unsurprisingly, this service uses a gRPC-based interface to request addresses (see [proto](_proto/lookaside.proto) for 
+services and messages). The application has a simple CLI interface:
 
 ```
 NAME:
