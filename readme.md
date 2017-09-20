@@ -27,3 +27,11 @@ GLOBAL OPTIONS:
    --help, -h                    show help
    --version, -v                 print the version
 ```
+
+## Building
+You'll need a working install of the Go programming language to compile the go code and the GNU `make` tool for running
+the builds. Once everything is installed and setup, just run:
+
+```bash
+$ make
+```

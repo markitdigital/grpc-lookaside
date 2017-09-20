@@ -37,6 +37,19 @@ func main() {
 	}
 	app.Action = func(c *cli.Context) error {
 
+		// bind defaults for docker
+		if c.String("bind") == "" {
+			c.Set("bind", ":3000")
+		}
+
+		if c.String("consul") == "" {
+			c.Set("consul", "127.0.0.1:8500")
+		}
+
+		if c.String("datacenter") == "" {
+			c.Set("datacenter", "dc1")
+		}
+
 		// create a TCP listener on the provided bind address
 		listener, err := net.Listen("tcp", c.String("bind"))
 		if err != nil {
