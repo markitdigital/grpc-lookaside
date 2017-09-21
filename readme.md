@@ -9,13 +9,13 @@ services and messages).
 ## CLI
 The application has a simple CLI interface and supports the following arguments:
 
-### bind, b
+### --bind, b
 The address that the service will bind to in {host}:{port} format. Defaults to `:3000`.
 
-### consul, c
+### --consul, c
 The address of the Consul agent used for service discovery. Defaults to `127.0.0.1:8500` (local agent).
 
-### datacenter, d
+### --datacenter, d
 The Consul datacenter to query for services. Defaults to `dc1`.
 
 ## Building
