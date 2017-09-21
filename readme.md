@@ -1,32 +1,22 @@
 # gRPC Lookaside Load Balancer
 This is an implementation of a lookaside (or external/one-arm) load balancer as detailed in the [gRPC documentation for
-load balancing](https://grpc.io/blog/loadbalancing). It uses Consul as the primary means of service discovery, but could 
-be made to support other applications if needed.
+load balancing](https://grpc.io/blog/loadbalancing) that uses Consul for service discovery. It supports multiple types of load-balancing (random, round-robin, hash) and periodic address refreshes.
 
 ## Usage
 Unsurprisingly, this service uses a gRPC-based interface to request addresses (see [proto](_proto/lookaside.proto) for 
-services and messages). The application has a simple CLI interface:
+services and messages). 
 
-```
-NAME:
-   grpc-lookaside - A lookaside load balancer for gRPC service requests.
+## CLI
+The application has a simple CLI interface and supports the following arguments:
 
-USAGE:
-   main.exe [global options] command [command options] [arguments...]
+### bind, b
+The address that the service will bind to in {host}:{port} format. Defaults to `:3000`.
 
-VERSION:
-   0.0.1
+### consul, c
+The address of the Consul agent used for service discovery. Defaults to `127.0.0.1:8500` (local agent).
 
-COMMANDS:
-     help, h  Shows a list of commands or help for one command
-
-GLOBAL OPTIONS:
-   --bind value, -b value        Bind address for the service (default: ":3000")
-   --consul value, -c value      Consul address (default: "127.0.0.1:8500")
-   --datacenter value, -d value  Consul datacenter (default: "dc1")
-   --help, -h                    show help
-   --version, -v                 print the version
-```
+### datacenter, d
+The Consul datacenter to query for services. Defaults to `dc1`.
 
 ## Building
 You'll need a working install of the Go programming language to compile the go code and the GNU `make` tool for running

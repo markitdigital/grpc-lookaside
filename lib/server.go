@@ -11,28 +11,32 @@ import (
 	pb "stash.mgmt.local/arch/grpc-lookaside/_proto"
 )
 
+const RefreshTime = 10.00 // seconds
+
 type Server struct {
 	ConsulAddress    string
 	ConsulDatacenter string
 	routers          map[string]*Router
-	routerAge        map[string]time.Time
 }
 
 func (s *Server) Resolve(ctx context.Context, input *pb.Request) (*pb.Response, error) {
 
-	addresses, err := s.getAddresses(input.Service)
-	if err != nil {
-		return nil, err
-	}
+	var (
+		address string
+		err     error
+	)
 
-	// create a router if we don't have one yet
-	if _, ok := s.routers[input.Service]; !ok {
-		s.routers[input.Service] = &Router{Addresses: addresses}
-		s.routerAge[input.Service] = time.Now()
+	// ensure router exists and addresses are fresh
+	if router, ok := s.routers[input.Service]; !ok || router.NeedsRefresh() {
+		addresses, err := s.refreshAddresses(input.Service)
+		if err != nil {
+			return nil, err
+		}
+
+		s.routers[input.Service] = &Router{Addresses: addresses, LastRefresh: time.Now()}
 	}
 
 	// determine the type of routing requested, and resolve an address
-	var address string
 	switch input.Router {
 	case pb.Request_RANDOM:
 		address, err = s.routers[input.Service].ResolveRandom()
@@ -49,7 +53,7 @@ func (s *Server) Resolve(ctx context.Context, input *pb.Request) (*pb.Response, 
 	return &pb.Response{Address: address}, nil
 }
 
-func (s *Server) getAddresses(service string) ([]string, error) {
+func (s *Server) refreshAddresses(service string) ([]string, error) {
 
 	// create a "set" using a map[string]struct{} to hold unique addresses
 	addressSet := make(map[string]struct{})
@@ -86,6 +90,5 @@ func NewServer(address, datacenter string) *Server {
 		ConsulAddress:    address,
 		ConsulDatacenter: datacenter,
 		routers:          map[string]*Router{},
-		routerAge:        map[string]time.Time{},
 	}
 }

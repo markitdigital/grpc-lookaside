@@ -17,7 +17,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "grpc-lookaside"
 	app.Usage = "A lookaside load balancer for gRPC service requests."
-	app.Version = "0.0.1"
+	app.Version = "0.0.2"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "bind,b",
