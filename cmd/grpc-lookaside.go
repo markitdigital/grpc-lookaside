@@ -8,8 +8,8 @@ import (
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
 
-	pb "stash.mgmt.local/arch/grpc-lookaside/_proto"
-	"stash.mgmt.local/arch/grpc-lookaside/lib"
+	"github.com/markitondemand/grpc-lookaside"
+	pb "github.com/markitondemand/grpc-lookaside/_proto"
 )
 
 func main() {
@@ -17,7 +17,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "grpc-lookaside"
 	app.Usage = "A lookaside load balancer for gRPC service requests."
-	app.Version = "0.0.2"
+	app.Version = "0.0.3"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "bind,b",
@@ -25,30 +25,19 @@ func main() {
 			Usage: "Bind address for the service",
 		},
 		cli.StringFlag{
-			Name:  "consul,c",
-			Value: "127.0.0.1:8500",
-			Usage: "Consul address",
+			Name:   "consul,c",
+			Value:  "127.0.0.1:8500",
+			Usage:  "Consul address",
+			EnvVar: "CONSUL_ADDRESS",
 		},
 		cli.StringFlag{
-			Name:  "datacenter,d",
-			Value: "dc1",
-			Usage: "Consul datacenter",
+			Name:   "datacenter,d",
+			Value:  "dc1",
+			Usage:  "Consul datacenter",
+			EnvVar: "CONSUL_DATACENTER",
 		},
 	}
 	app.Action = func(c *cli.Context) error {
-
-		// bind defaults for docker
-		if c.String("bind") == "" {
-			c.Set("bind", ":3000")
-		}
-
-		if c.String("consul") == "" {
-			c.Set("consul", "127.0.0.1:8500")
-		}
-
-		if c.String("datacenter") == "" {
-			c.Set("datacenter", "dc1")
-		}
 
 		// create a TCP listener on the provided bind address
 		listener, err := net.Listen("tcp", c.String("bind"))

@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/consul/api"
 	"golang.org/x/net/context"
 
-	pb "stash.mgmt.local/arch/grpc-lookaside/_proto"
+	pb "github.com/markitondemand/grpc-lookaside/_proto"
 )
 
 const RefreshTime = 10.00 // seconds
