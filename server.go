@@ -11,12 +11,11 @@ import (
 	pb "github.com/markitondemand/grpc-lookaside/_proto"
 )
 
-const RefreshTime = 10.00 // seconds
-
 type Server struct {
 	ConsulAddress    string
 	ConsulDatacenter string
 	routers          map[string]*Router
+	refreshInterval  float64
 }
 
 func (s *Server) Resolve(ctx context.Context, input *pb.Request) (*pb.Response, error) {
@@ -33,7 +32,7 @@ func (s *Server) Resolve(ctx context.Context, input *pb.Request) (*pb.Response, 
 			return nil, err
 		}
 
-		s.routers[input.Service] = &Router{Addresses: addresses, LastRefresh: time.Now()}
+		s.routers[input.Service] = &Router{Addresses: addresses, LastRefresh: time.Now(), RefreshInterval: s.refreshInterval}
 	}
 
 	// determine the type of routing requested, and resolve an address
@@ -85,10 +84,11 @@ func (s *Server) refreshAddresses(service string) ([]string, error) {
 
 }
 
-func NewServer(address, datacenter string) *Server {
+func NewServer(address, datacenter string, refresh float64) *Server {
 	return &Server{
 		ConsulAddress:    address,
 		ConsulDatacenter: datacenter,
 		routers:          map[string]*Router{},
+		refreshInterval:  refresh,
 	}
 }

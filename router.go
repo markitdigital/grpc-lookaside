@@ -8,12 +8,11 @@ import (
 	"time"
 )
 
-const refreshInterval = 10.00 // seconds
-
 // Router is a type that contains a set of addresses and methods for resolving them based on use input
 type Router struct {
 	Addresses        []string
 	LastRefresh      time.Time
+	RefreshInterval  float64
 	roundRobinCursor int
 	hashRouteMap     map[string]string
 }
@@ -77,5 +76,5 @@ func (r *Router) ResolveRoundRobin() (string, error) {
 }
 
 func (r *Router) NeedsRefresh() bool {
-	return time.Now().Sub(r.LastRefresh).Seconds() >= refreshInterval
+	return time.Now().Sub(r.LastRefresh).Seconds() >= r.RefreshInterval
 }
