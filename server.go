@@ -6,16 +6,16 @@ import (
 	"time"
 
 	"github.com/hashicorp/consul/api"
+	"github.com/urfave/cli"
 	"golang.org/x/net/context"
 
 	pb "github.com/markitondemand/grpc-lookaside/_proto"
 )
 
 type Server struct {
-	ConsulAddress    string
-	ConsulDatacenter string
-	routers          map[string]*Router
-	refreshInterval  float64
+	context         *cli.Context
+	routers         map[string]*Router
+	refreshInterval float64
 }
 
 func (s *Server) Resolve(ctx context.Context, input *pb.Request) (*pb.Response, error) {
@@ -32,7 +32,7 @@ func (s *Server) Resolve(ctx context.Context, input *pb.Request) (*pb.Response, 
 			return nil, err
 		}
 
-		s.routers[input.Service] = &Router{Addresses: addresses, LastRefresh: time.Now(), RefreshInterval: s.refreshInterval}
+		s.routers[input.Service] = &Router{Addresses: addresses, LastRefresh: time.Now(), RefreshInterval: s.context.Float64("refresh")}
 	}
 
 	// determine the type of routing requested, and resolve an address
@@ -58,7 +58,7 @@ func (s *Server) refreshAddresses(service string) ([]string, error) {
 	addressSet := make(map[string]struct{})
 
 	// create a consul client
-	consul, err := api.NewClient(&api.Config{Address: s.ConsulAddress, Datacenter: s.ConsulDatacenter})
+	consul, err := api.NewClient(&api.Config{Address: s.context.String("address"), Datacenter: s.context.String("datacenter")})
 	if err != nil {
 		return make([]string, 0), err
 	}
@@ -84,11 +84,9 @@ func (s *Server) refreshAddresses(service string) ([]string, error) {
 
 }
 
-func NewServer(address, datacenter string, refresh float64) *Server {
+func NewServer(c *cli.Context) *Server {
 	return &Server{
-		ConsulAddress:    address,
-		ConsulDatacenter: datacenter,
-		routers:          map[string]*Router{},
-		refreshInterval:  refresh,
+		context: c,
+		routers: map[string]*Router{},
 	}
 }

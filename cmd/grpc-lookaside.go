@@ -17,7 +17,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "grpc-lookaside"
 	app.Usage = "A lookaside load balancer for gRPC service requests."
-	app.Version = "0.0.4"
+	app.Version = "0.0.6"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "bind,b",
@@ -50,13 +50,12 @@ func main() {
 		if err != nil {
 			log.Fatalf("Failed to listen: %v", err)
 		}
-
 		log.Printf("Listening for requests at %s\n", c.String("bind"))
 		defer listener.Close()
 
 		// register the server implementation with the generated handlers and listen for incoming requests
 		server := grpc.NewServer()
-		pb.RegisterLookasideServer(server, lookaside.NewServer(c.String("consul"), c.String("datacenter"), c.Float64("refresh")))
+		pb.RegisterLookasideServer(server, lookaside.NewServer(c))
 		return server.Serve(listener)
 
 	}
