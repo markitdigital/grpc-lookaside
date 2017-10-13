@@ -1,6 +1,6 @@
 LDFLAGS=-ldflags "-s -w"
 .DEFAULT_GOAL := all
-all: clean ensure proto test windows linux docker
+all: clean ensure proto test windows linux zip
 
 clean:
 	$(RM) -rf ./bin/*
@@ -23,3 +23,7 @@ test:
 
 windows:
 	GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o ./bin/linux_amd64/grpc-lookaside ./cmd/grpc-lookaside.go
+
+zip:
+	7z a bin/grpc-lookaside-linux-amd64.zip bin/linux_amd64/
+	7z a bin/grpc-lookaside-windows-amd64.zip bin/windows_amd64/
